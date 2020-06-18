@@ -1,21 +1,39 @@
 #include "Object.h"
+#include <QCoreApplication>
+#include <QDebug>
 
 const QEvent::Type LitePropertyChangedEvent::eventType =
-    static_cast<QEvent::Type>(QEvent::registerEventType(QEvent::User + 1));
+    static_cast<QEvent::Type>(QEvent::registerEventType(LiteEvent::LitePropertyChanged));
 
 LitePropertyChangedEvent::LitePropertyChangedEvent(LiteObject * sender,
  const QString& propertyName) : QEvent(eventType),
     m_sender(sender),
     m_propertyName(propertyName)
  {
+     setAccepted(false);
  }
 
- 
+LitePropertyChangedEvent::~LitePropertyChangedEvent()
+{
+    qDebug() << "Destroy LiteEvent";
+}
+
+QString LitePropertyChangedEvent::propertyName()
+{
+    return m_propertyName;
+}
+
+LiteObject * LitePropertyChangedEvent::sender()
+{
+    return m_sender;
+}
+
+LiteObject LiteObject::RootObject("root");
 LiteObject::LiteObject(const QString& objName, LiteObject * parent) : QObject(parent),
     m_ObjectName(objName),
     m_parentObject(parent)
 {
-    m_rootObject = m_parentObject->rootObject();
+
 }
 
 LiteObject::~LiteObject()
@@ -30,7 +48,7 @@ QString LiteObject::name() const
 
 LiteObject* LiteObject::rootObject() const
 {
-   return m_rootObject;
+   return &RootObject;
 }
 
 LiteObject* LiteObject::parentObject() const
@@ -38,14 +56,39 @@ LiteObject* LiteObject::parentObject() const
     return m_parentObject;
 }
 
-LiteObject * LiteObject::CreateRootObject()
+LiteObject& LiteObject::CreateRootObject()
 {
-    //TODO Create root object
-    //TODO revise the private m_rootObject member to with static annotation
-    return nullptr;
+    return RootObject;
 }
 
 bool LiteObject::event(QEvent * ev)
 {
-    return QObject::event(ev);
+    QDynamicPropertyChangeEvent * dynamicEv = nullptr;
+    LitePropertyChangedEvent * event;
+    switch (ev->type())
+    {
+    case QEvent::DynamicPropertyChange:
+        qDebug() << "DynamicPropertyChanged";
+        dynamicEv = dynamic_cast<QDynamicPropertyChangeEvent*>(ev);
+        if (dynamicEv != nullptr)
+        {
+            litePropertyChangedEvent(
+             &LitePropertyChangedEvent(this, dynamicEv->propertyName())
+            );
+        }
+        break;
+    case LiteEvent::LitePropertyChanged:
+        event = dynamic_cast<LitePropertyChangedEvent *>(ev);
+        litePropertyChangedEvent(event);
+        break;
+    default:
+        return QObject::event(ev);
+    }
+    return true;
+}
+
+void LiteObject::litePropertyChangedEvent(LitePropertyChangedEvent * ev)
+{
+    qDebug() << "PropertyChangedEvent" << ev->sender()->name() <<
+        "PropertyName:" << ev->propertyName();
 }

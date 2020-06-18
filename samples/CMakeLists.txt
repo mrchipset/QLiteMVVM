@@ -5,7 +5,7 @@ project(Samples VERSION 0.1.0)
 find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
 
 include_directories(../QLiteMVVM)
-add_executable(TestDemo testdemo.cc)
+add_executable(TestDemo testdemo.cc myObject.cc)
 target_link_libraries(TestDemo QLiteMVVMLib
                         Qt5::Core
                         Qt5::Concurrent)
