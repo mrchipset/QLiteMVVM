@@ -3,8 +3,12 @@
 #include <QDebug>
 #include <QtConcurrent>
 
-MyObject::MyObject(LiteObject * parent) : LiteObject("foo", parent)
+MyObject::MyObject(LiteObject* parent) : LiteObject("foo", parent),
+    m_listener(this)
 {
+    connect(this, &MyObject::fooChanged, [ = ]() {
+        qDebug() << "fooChanged" << m_foo;
+    });
 }
 
 void MyObject::setFoo(QString bar)
@@ -12,7 +16,6 @@ void MyObject::setFoo(QString bar)
     qDebug() << QThread::currentThreadId();
     m_foo = bar;
     emit(fooChanged());
-    QCoreApplication::postEvent(this, new LitePropertyChangedEvent(this, "foo"));
 }
 
 QString MyObject::foo() const
