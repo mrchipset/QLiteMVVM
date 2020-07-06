@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(QLiteMVVMLib VERSION 0.1.0)
 
-
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
 
 find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
 

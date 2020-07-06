@@ -5,6 +5,7 @@
 #include <QString>
 #include <QMap>
 
+#include "ObjectListener.h"
 class LiteObject;
 
 enum LiteEvent {
@@ -34,7 +35,6 @@ public:
     Q_INVOKABLE QString name() const;
     Q_INVOKABLE LiteObject* rootObject() const;
     Q_INVOKABLE LiteObject* parentObject() const;
-
     static LiteObject& CreateRootObject();
 private:
     QString m_ObjectName;

@@ -38,7 +38,7 @@ LiteObject::LiteObject(const QString& objName, LiteObject* parent) : QObject(par
     m_ObjectName(objName),
     m_parentObject(parent)
 {
-
+    setObjectName(objName);
 }
 
 LiteObject::~LiteObject()
@@ -70,6 +70,8 @@ bool LiteObject::event(QEvent* ev)
 {
     QDynamicPropertyChangeEvent* dynamicEv = nullptr;
     LitePropertyChangedEvent* event;
+    // QChildEvent* childEvent;
+    // LiteObject* childObject;
     switch (ev->type()) {
     case QEvent::DynamicPropertyChange:
         qDebug() << "DynamicPropertyChanged";
@@ -84,7 +86,16 @@ bool LiteObject::event(QEvent* ev)
         event = dynamic_cast<LitePropertyChangedEvent*>(ev);
         litePropertyChangedEvent(event);
         break;
+    // case QEvent::ChildAdded:
+    //     childEvent = dynamic_cast<QChildEvent*>(ev);
+    //     qDebug() << childEvent
+    //              childObject = dynamic_cast<LiteObject*>(childEvent->child());
+    //     if (childObject) {
+    //         childObject->m_propertyListener =
+    //             new LiteObjectPropertyListener(childObject);
+    //     }
     default:
+        qDebug() << ev->type();
         return QObject::event(ev);
     }
     return true;

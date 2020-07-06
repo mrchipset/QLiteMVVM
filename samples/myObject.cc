@@ -3,8 +3,7 @@
 #include <QDebug>
 #include <QtConcurrent>
 
-MyObject::MyObject(LiteObject* parent) : LiteObject("foo", parent),
-    m_listener(this)
+MyObject::MyObject(LiteObject* parent) : LiteObject("foo", parent)
 {
     connect(this, &MyObject::fooChanged, [ = ]() {
         qDebug() << "fooChanged" << m_foo;
@@ -13,7 +12,7 @@ MyObject::MyObject(LiteObject* parent) : LiteObject("foo", parent),
 
 void MyObject::setFoo(QString bar)
 {
-    qDebug() << QThread::currentThreadId();
+    // qDebug() << QThread::currentThreadId();
     m_foo = bar;
     emit(fooChanged());
 }

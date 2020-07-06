@@ -13,7 +13,6 @@ public:
     Q_SIGNAL void fooChanged();
 private:
     QString m_foo;
-    FakeObjectListener m_listener;
 
 };
 #endif
