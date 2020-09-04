@@ -14,7 +14,7 @@ void MyObject::setFoo(QString bar)
 {
     // qDebug() << QThread::currentThreadId();
     m_foo = bar;
-    emit(fooChanged());
+    // emit(fooChanged());
 }
 
 QString MyObject::foo() const

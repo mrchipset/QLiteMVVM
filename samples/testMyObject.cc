@@ -1,30 +1,93 @@
-#include <QCoreApplication>
+// #include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
+#include <QDialog>
+#include <QLabel>
+#include <QPushButton>
+#include <QMainWindow>
+#include <QVBoxLayout>
 #include <QtConcurrent>
 #include <QJSEngine>
 
 #include "Global/Global"
 #include "DependencyObject/DependencyObject"
+#include "DependencyObject/Property.h"
+#include "Widget/Widget.h"
 #include "myObject.h"
 
-int main(int argc, char** argv)
+void testObject(LiteObject* rootObject)
 {
-    QCoreApplication app(argc, argv);
-    Logger::GetInstance();
-    LiteObject* rootObject = &LiteObject::CreateRootObject();
     MyObject myObject(rootObject);
     LiteObjectPropertyListener listener(&myObject, rootObject);
     qDebug() << QThread::currentThreadId();
     QtConcurrent::run(&myObject, &MyObject::setFoo, QString("bar-c"));
     myObject.setFoo("foo");
     myObject.setProperty("foo2", "bar");
-    qDebug() << "Start MyObject";
+    // qDebug() << "Start MyObject";
     FakeObjectListener::GetMetaSignal(&myObject);
-    qDebug() << "Start RootObject";
+    // qDebug() << "Start RootObject";
     FakeObjectListener::GetMetaSignal(rootObject);
     QJSEngine engine;
     QJSValue jsObject = engine.newQObject(&myObject);
     engine.globalObject().setProperty("myObject", jsObject);
     engine.evaluate("myObject.foo = \"hello\"");
+}
+
+void testProperty(LiteObject* rootObject)
+{
+    NumericProperty property("property->1", 0, 9, rootObject);
+    qDebug() << property.setValue(10);
+    QJSEngine engine;
+    QJSValue jsObject = engine.newQObject(&property);
+    engine.globalObject().setProperty("myProperty", jsObject);
+    engine.evaluate("myProperty.upper = 4");
+    engine.evaluate("myProperty.lower = 2");
+    engine.evaluate("myProperty.value = 3.5");
+    qDebug() << property.setValue(8);
+    qDebug() << property.getValue();
+    qDebug() << property.type();
+}
+
+void testWidget(LiteObject* rootObject)
+{
+    static QMainWindow window;
+    QVBoxLayout * layout = new QVBoxLayout(&window);
+    QPushButton *enable = new QPushButton("enable", &window);
+    QPushButton *disable = new QPushButton("disable", &window);
+    QPushButton *label = new QPushButton("Hello", &window);
+    layout->addWidget(enable);
+    layout->addWidget(disable);
+    layout->addWidget(label);
+    Widget *widget = new Widget("", rootObject);
+    widget->bindQWidget(label);
+    QMap<QString, Property *> properties = widget->property("properties").value<QMap<QString, Property *>>();
+    qDebug() << properties.size();
+    widget->printProperties();
+    properties["enabled"]->setValue(false);
+    QObject::connect(enable, &QPushButton::clicked, [=](){
+        QMap<QString, Property *> properties = widget->property("properties").value<QMap<QString, Property *>>();
+        properties["enabled"]->setValue(true);
+    });
+    QObject::connect(disable, &QPushButton::clicked, [=](){
+        QMap<QString, Property *> properties = widget->property("properties").value<QMap<QString, Property *>>();
+            properties["enabled"]->setValue(false);
+    });
+    window.setCentralWidget(new QWidget(&window));
+    window.centralWidget()->setLayout(layout);
+    window.show();
+    
+    // properties.first()->setValue(100);
+    // properties.last()->setValue(false);
+}
+int main(int argc, char** argv)
+{
+    QApplication app(argc, argv);
+    Logger::GetInstance();
+    LiteObject* rootObject = &LiteObject::CreateRootObject();
+    // testObject(rootObject);
+    // testProperty(rootObject);
+    testWidget(rootObject);
+    // return 0;
     return app.exec();
 }
+

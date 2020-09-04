@@ -100,7 +100,7 @@ int LiteObjectPropertyListener::qt_metacall(QMetaObject::Call c, int id, void** 
     auto signalKey = id;
     if (m_targetPropertyMap.contains(signalKey)) {
         QMetaProperty property = m_targetPropertyMap[signalKey];
-        qDebug() << property.name() << m_target->property(property.name());
+        qDebug() << property.name() << m_target->property(property.name()).type();
         // find property valid for two way/ one way binding.
 
     }

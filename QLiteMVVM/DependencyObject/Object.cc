@@ -2,6 +2,11 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMetaMethod>
+#include <QMetaType>
+#include <QMap>
+
+#include "Property.h"
+
 # pragma region class LitePropertyEvent
 const QEvent::Type LitePropertyChangedEvent::eventType =
     static_cast<QEvent::Type>(QEvent::registerEventType(LiteEvent::LitePropertyChanged));
@@ -34,6 +39,25 @@ LiteObject* LitePropertyChangedEvent::sender()
 # pragma region class LiteObject
 
 LiteObject LiteObject::RootObject("root");
+bool metaTypeRegistered = false;
+
+/**
+ * @brief register Qt MetaType
+ * 
+ */
+void registerMetaType()
+{
+    if (metaTypeRegistered)
+    {
+        return;
+    }
+
+    qRegisterMetaType<QMap<QString, Property*>>("QMap<QString, Property*>");
+
+    metaTypeRegistered = true;
+    
+}
+
 LiteObject::LiteObject(const QString& objName, LiteObject* parent) : QObject(parent),
     m_ObjectName(objName),
     m_parentObject(parent)
@@ -63,6 +87,7 @@ LiteObject* LiteObject::parentObject() const
 
 LiteObject& LiteObject::CreateRootObject()
 {
+    registerMetaType();
     return RootObject;
 }
 
