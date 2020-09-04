@@ -1,4 +1,5 @@
 #include "TreeWidget.h"
+#include "../DependencyObject/Property.h"
 
 #pragma region class ObjectTreeItem
 
@@ -27,6 +28,11 @@ static void WalkAndCreateTreeItem(ObjectTreeItem* parentItem, LiteObject* parent
                 LiteObject * liteObj = qobject_cast<LiteObject*>(*iter);
                 if (liteObj)
                 {
+                    Property* _property = qobject_cast<Property*>(*iter);
+                    if (_property != nullptr)
+                    {
+                        continue;
+                    }
                     ObjectTreeItem* item = new ObjectTreeItem(liteObj, GetLiteObjectInfo(liteObj), parentItem);
                     WalkAndCreateTreeItem(item, liteObj);
                 }
@@ -49,9 +55,16 @@ ObjectTreeWidget::ObjectTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
     QStringList headers;
     headers << tr("ObjName") << tr("Type");
-    this->setHeaderLabels(headers);
-    ObjectTreeItem* rootItem = ObjectTreeItem::CreateTopObjectTreeItem(&LiteObject::CreateRootObject());
-    this->addTopLevelItem(rootItem);
+    setHeaderLabels(headers);
+    createTreeList();
+    connect(&LiteObject::CreateRootObject(), &LiteObject::objectTreeUpdated,
+        this, &ObjectTreeWidget::createTreeList);
 }
 
+void ObjectTreeWidget::createTreeList()
+{
+    clear();
+    ObjectTreeItem* rootItem = ObjectTreeItem::CreateTopObjectTreeItem(&LiteObject::CreateRootObject());
+    addTopLevelItem(rootItem);
+}
 #pragma endregion

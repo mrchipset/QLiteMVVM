@@ -101,15 +101,15 @@ bool LiteObject::event(QEvent* ev)
 {
     QDynamicPropertyChangeEvent* dynamicEv = nullptr;
     LitePropertyChangedEvent* event;
-    // QChildEvent* childEvent;
-    // LiteObject* childObject;
+    QChildEvent* childEvent;
+    LiteObject* childObject;
     switch (ev->type()) {
     case QEvent::DynamicPropertyChange:
         qDebug() << "DynamicPropertyChanged";
         dynamicEv = dynamic_cast<QDynamicPropertyChangeEvent*>(ev);
         if (dynamicEv != nullptr) {
             litePropertyChangedEvent(
-                &LitePropertyChangedEvent(this, dynamicEv->propertyName())
+                new LitePropertyChangedEvent(this, dynamicEv->propertyName())
             );
         }
         break;
@@ -117,14 +117,15 @@ bool LiteObject::event(QEvent* ev)
         event = dynamic_cast<LitePropertyChangedEvent*>(ev);
         litePropertyChangedEvent(event);
         break;
-    // case QEvent::ChildAdded:
-    //     childEvent = dynamic_cast<QChildEvent*>(ev);
-    //     qDebug() << childEvent
-    //              childObject = dynamic_cast<LiteObject*>(childEvent->child());
-    //     if (childObject) {
-    //         childObject->m_propertyListener =
-    //             new LiteObjectPropertyListener(childObject);
-    //     }
+    case QEvent::ChildAdded:
+        childEvent = dynamic_cast<QChildEvent*>(ev);
+        qDebug() << childEvent;
+        childObject = dynamic_cast<LiteObject*>(childEvent->child());
+        if (childObject) {
+            // childObject->m_propertyListener =
+            //     new LiteObjectPropertyListener(childObject);
+            emit(rootObject()->objectTreeUpdated());
+        }
     default:
         qDebug() << ev->type();
         return QObject::event(ev);

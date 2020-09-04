@@ -36,6 +36,8 @@ public:
     Q_INVOKABLE LiteObject* rootObject() const;
     Q_INVOKABLE LiteObject* parentObject() const;
     static LiteObject& CreateRootObject();
+Q_SIGNALS:
+    void objectTreeUpdated();
 private:
     QString m_ObjectName;
     LiteObject* m_parentObject;

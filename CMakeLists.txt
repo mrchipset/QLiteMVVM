@@ -17,6 +17,8 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
+add_definitions(-w)
+
 add_subdirectory(QLiteMVVM)
 add_subdirectory(samples)
 

@@ -61,7 +61,7 @@ void testWidget(LiteObject* rootObject)
     layout->addWidget(enable);
     layout->addWidget(disable);
     layout->addWidget(label);
-    Widget *widget = new Widget("", rootObject);
+    Widget *widget = new Widget("Tree", rootObject);
     widget->bindQWidget(label);
     QMap<QString, Property *> properties = widget->property("properties").value<QMap<QString, Property *>>();
     qDebug() << properties.size();
@@ -90,12 +90,13 @@ int main(int argc, char** argv)
     LiteObject* grp1 = new LiteObject("grp1", rootObject);
     LiteObject* grp2 = new LiteObject("grp2", rootObject);
     LiteObject* item1_1 = new LiteObject("item1", grp1);
-    LiteObject* item1_2 = new LiteObject("item2", grp1);
     LiteObject* item2_1 = new LiteObject("item1", grp2);
+
+    testWidget(rootObject);
+    LiteObject* item1_2 = new LiteObject("item2", grp1);
     MyObject* item2_2 = new MyObject();
     // testObject(rootObject);
     // testProperty(rootObject);
-    testWidget(rootObject);
     // return 0;
     return app.exec();
 }

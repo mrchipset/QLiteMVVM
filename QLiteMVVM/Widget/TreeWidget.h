@@ -21,6 +21,6 @@ class ObjectTreeWidget : public QTreeWidget
     Q_OBJECT
 public:
     ObjectTreeWidget(QWidget * parent=nullptr);
-    
+    Q_SLOT void createTreeList();
 };
 #endif
