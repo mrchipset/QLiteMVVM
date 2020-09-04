@@ -24,7 +24,7 @@ private:
     void connectQWidgetSignal();
     void createProperties();
     Q_SLOT void onQWidgetDestroy();
-    Q_SLOT void onValueChanged();
+    // Q_SLOT void onValueChanged();
 protected:
     QMap<QString, Property*> m_properties;
     QWidget* m_bindQWidget;

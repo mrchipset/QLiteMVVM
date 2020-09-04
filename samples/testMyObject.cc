@@ -13,6 +13,7 @@
 #include "DependencyObject/DependencyObject"
 #include "DependencyObject/Property.h"
 #include "Widget/Widget.h"
+#include "Widget/TreeWidget.h"
 #include "myObject.h"
 
 void testObject(LiteObject* rootObject)
@@ -55,6 +56,8 @@ void testWidget(LiteObject* rootObject)
     QPushButton *enable = new QPushButton("enable", &window);
     QPushButton *disable = new QPushButton("disable", &window);
     QPushButton *label = new QPushButton("Hello", &window);
+    ObjectTreeWidget * tree = new ObjectTreeWidget(&window);
+    layout->addWidget(tree);
     layout->addWidget(enable);
     layout->addWidget(disable);
     layout->addWidget(label);
@@ -84,6 +87,12 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
     Logger::GetInstance();
     LiteObject* rootObject = &LiteObject::CreateRootObject();
+    LiteObject* grp1 = new LiteObject("grp1", rootObject);
+    LiteObject* grp2 = new LiteObject("grp2", rootObject);
+    LiteObject* item1_1 = new LiteObject("item1", grp1);
+    LiteObject* item1_2 = new LiteObject("item2", grp1);
+    LiteObject* item2_1 = new LiteObject("item1", grp2);
+    MyObject* item2_2 = new MyObject();
     // testObject(rootObject);
     // testProperty(rootObject);
     testWidget(rootObject);

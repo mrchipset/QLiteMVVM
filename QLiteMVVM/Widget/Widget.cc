@@ -80,7 +80,7 @@ void Widget::createProperties()
     {
         Property* property = new Property(*iter, m_bindQWidget, this);
         m_properties.insert(iter->name(), property);
-        connect(property, &Property::valueChanged, this, &Widget::onValueChanged);
+        // connect(property, &Property::valueChanged, this, &Widget::onValueChanged);
     }
 }
 
@@ -90,11 +90,11 @@ void Widget::onQWidgetDestroy()
     m_bindQWidget = nullptr;
 }
 
-void Widget::onValueChanged()
-{
-    Property* property = qobject_cast<Property *>(sender());
-    if (property)
-    {
-        m_bindQWidget->setProperty(property->name().toLocal8Bit(), property->getValue());
-    }
-}
+// void Widget::onValueChanged()
+// {
+//     Property* property = qobject_cast<Property *>(sender());
+//     if (property)
+//     {
+//         m_bindQWidget->setProperty(property->name().toLocal8Bit(), property->getValue());
+//     }
+// }
