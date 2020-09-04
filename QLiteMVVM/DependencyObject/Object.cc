@@ -58,10 +58,16 @@ void registerMetaType()
     
 }
 
-LiteObject::LiteObject(const QString& objName, LiteObject* parent) : QObject(parent),
+LiteObject::LiteObject(const QString& objName, LiteObject* parent)
+    : QObject(parent),
     m_ObjectName(objName),
     m_parentObject(parent)
 {
+    if(this!=&RootObject && this->parent() == nullptr)
+    {
+        setParent(&RootObject);
+        m_parentObject = &RootObject;
+    }
     setObjectName(objName);
 }
 
