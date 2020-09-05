@@ -95,14 +95,19 @@ void testTableView(LiteObject* rootObject)
     model->setHorizontalHeaderLabels(QStringList() << "Property Name" << "Variant");
     model->setColumnCount(2);
     model->setRowCount(2);
-    QModelIndex item0_0 = model->index(0, 0, QModelIndex());
-    QModelIndex item0_1 = model->index(0, 1, QModelIndex());
-    QModelIndex item1_0 = model->index(1, 0, QModelIndex());
-    QModelIndex item1_1 = model->index(1, 1, QModelIndex());
-    model->setData(item0_0, QColor(0,0,0));
-    model->setData(item0_1, QVariant(1));
-    model->setData(item1_0, QVariant(0.34));
-    model->setData(item1_1, QVariant(3));
+
+    QStandardItem* item1 = new QStandardItem();
+    item1->setData("1", Qt::EditRole);
+    QStandardItem* item2 = new QStandardItem();
+    item2->setData(0, Qt::EditRole);
+    QStandardItem* item3 = new QStandardItem();
+    item3->setData(4, Qt::EditRole);
+    QStandardItem* item4 = new QStandardItem();
+    item4->setData(1, Qt::EditRole);
+    model->setItem(0, 0, item1);
+    model->setItem(0, 1, item2);
+    model->setItem(1, 0, item3);
+    model->setItem(1, 1, item4);
 
     window.setCentralWidget(tableView);
     window.show();
