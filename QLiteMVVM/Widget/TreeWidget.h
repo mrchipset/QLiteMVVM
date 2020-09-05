@@ -23,4 +23,5 @@ public:
     ObjectTreeWidget(QWidget * parent=nullptr);
     Q_SLOT void createTreeList();
 };
+
 #endif

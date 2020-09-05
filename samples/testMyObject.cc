@@ -8,12 +8,14 @@
 #include <QVBoxLayout>
 #include <QtConcurrent>
 #include <QJSEngine>
+#include <QColor>
 
 #include "Global/Global"
 #include "DependencyObject/DependencyObject"
 #include "DependencyObject/Property.h"
 #include "Widget/Widget.h"
 #include "Widget/TreeWidget.h"
+#include "Widget/PropertyTableView.h"
 #include "myObject.h"
 
 void testObject(LiteObject* rootObject)
@@ -82,6 +84,30 @@ void testWidget(LiteObject* rootObject)
     // properties.first()->setValue(100);
     // properties.last()->setValue(false);
 }
+
+void testTableView(LiteObject* rootObject)
+{
+    static QMainWindow window;
+    PropertyTableView* tableView = new PropertyTableView(&window);
+    PropertyItemModel* model = new PropertyItemModel(tableView);
+    tableView->setModel(model);
+    tableView->setItemDelegate(new PropertyItemDelegate());
+    model->setHorizontalHeaderLabels(QStringList() << "Property Name" << "Variant");
+    model->setColumnCount(2);
+    model->setRowCount(2);
+    QModelIndex item0_0 = model->index(0, 0, QModelIndex());
+    QModelIndex item0_1 = model->index(0, 1, QModelIndex());
+    QModelIndex item1_0 = model->index(1, 0, QModelIndex());
+    QModelIndex item1_1 = model->index(1, 1, QModelIndex());
+    model->setData(item0_0, QColor(0,0,0));
+    model->setData(item0_1, QVariant(1));
+    model->setData(item1_0, QVariant(0.34));
+    model->setData(item1_1, QVariant(3));
+
+    window.setCentralWidget(tableView);
+    window.show();
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
@@ -92,11 +118,12 @@ int main(int argc, char** argv)
     LiteObject* item1_1 = new LiteObject("item1", grp1);
     LiteObject* item2_1 = new LiteObject("item1", grp2);
 
-    testWidget(rootObject);
+    // testWidget(rootObject);
     LiteObject* item1_2 = new LiteObject("item2", grp1);
     MyObject* item2_2 = new MyObject();
     // testObject(rootObject);
     // testProperty(rootObject);
+    testTableView(rootObject);
     // return 0;
     return app.exec();
 }

@@ -18,8 +18,6 @@ static QStringList GetLiteObjectInfo(LiteObject* object)
 
 static void WalkAndCreateTreeItem(ObjectTreeItem* parentItem, LiteObject* parentObj)
 {
-
-
     if (parentObj != nullptr)
          {
             QObjectList childrens = parentObj->children();
