@@ -1,5 +1,8 @@
 #include "PropertyTableView.h"
 #include <QLabel>
+#include <QDebug>
+#include <QDialog>
+#include <QPushButton>
 
 #pragma region class PropertyItemDelegate
 PropertyItemDelegate::PropertyItemDelegate(QObject *parent) : QItemDelegate(parent)
@@ -10,6 +13,8 @@ QWidget *PropertyItemDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &option,
     const QModelIndex &index) const
 {
+    
+
     if(index.column() == Name)  //Property Name
     {
         QLabel* editor = new QLabel(parent);
@@ -18,6 +23,12 @@ QWidget *PropertyItemDelegate::createEditor(QWidget *parent,
     }
     else    //Property Value
     {
+        //Get the type of property value
+        const PropertyItemModel* model = qobject_cast<const PropertyItemModel*>(index.model());
+        if (model != nullptr)
+        {
+            qDebug() << model->itemFromIndex(index)->data(Qt::EditRole).type();
+        }
         return QItemDelegate::createEditor(parent, option, index);
     }
 }
@@ -64,6 +75,13 @@ PropertyItemModel::PropertyItemModel(QObject* parent) : QStandardItemModel(paren
 
 }
 
+#pragma endregion
+
+#pragma region class PropertyItem
+PropertyItem::PropertyItem() : QStandardItem()
+{
+    
+}
 #pragma endregion
 
 #pragma region class PropertyTableView

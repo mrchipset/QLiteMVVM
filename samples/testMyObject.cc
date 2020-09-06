@@ -96,13 +96,13 @@ void testTableView(LiteObject* rootObject)
     model->setColumnCount(2);
     model->setRowCount(2);
 
-    QStandardItem* item1 = new QStandardItem();
+    QStandardItem* item1 = new PropertyItem();
     item1->setData("1", Qt::EditRole);
-    QStandardItem* item2 = new QStandardItem();
+    QStandardItem* item2 = new PropertyItem();
     item2->setData(0, Qt::EditRole);
-    QStandardItem* item3 = new QStandardItem();
+    QStandardItem* item3 = new PropertyItem();
     item3->setData(4, Qt::EditRole);
-    QStandardItem* item4 = new QStandardItem();
+    QStandardItem* item4 = new PropertyItem();
     item4->setData(1, Qt::EditRole);
     model->setItem(0, 0, item1);
     model->setItem(0, 1, item2);

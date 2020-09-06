@@ -37,6 +37,12 @@ public:
     PropertyItemModel(QObject* parent=nullptr);
 };
 
+class PropertyItem : public QStandardItem
+{
+public:
+    PropertyItem();
+};
+
 class PropertyTableView : public QTableView
 {
     Q_OBJECT
