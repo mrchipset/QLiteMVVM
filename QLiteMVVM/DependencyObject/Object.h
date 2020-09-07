@@ -30,9 +30,9 @@ class LiteObject : public QObject
     Q_OBJECT
     Q_PROPERTY(QString objName READ name)
 public:
-    LiteObject(LiteObject* parent = nullptr);
-    LiteObject(const QString& objName, LiteObject* parent = nullptr);
-    virtual ~LiteObject();
+    Q_INVOKABLE LiteObject(LiteObject* parent = nullptr);
+    Q_INVOKABLE LiteObject(const QString& objName, LiteObject* parent = nullptr);
+    virtual Q_INVOKABLE ~LiteObject();
     Q_INVOKABLE QString name() const;
     Q_INVOKABLE LiteObject* rootObject() const;
     Q_INVOKABLE LiteObject* parentObject() const;
@@ -49,5 +49,13 @@ protected:
     virtual void litePropertyChangedEvent(LitePropertyChangedEvent* ev);
     virtual bool event(QEvent* ev) override;
 };
+Q_DECLARE_METATYPE(LiteObject*);
 
+class Object : public LiteObject
+{
+    Q_OBJECT
+public:
+    Object(const QString& objName, LiteObject* parent = nullptr);
+};
+Q_DECLARE_METATYPE(Object*);
 #endif

@@ -78,7 +78,7 @@ void Widget::createProperties()
     QList<QMetaProperty> metaProperties = FakeObjectListener::GetMetaProperty(m_bindQWidget);
     for(auto iter=metaProperties.begin(); iter!=metaProperties.end(); iter++)
     {
-        Property* property = new Property(*iter, m_bindQWidget, this);
+        Property* property =  PropertyFactory::CreateProperty(*iter, m_bindQWidget, this);
         m_properties.insert(iter->name(), property);
         // connect(property, &Property::valueChanged, this, &Widget::onValueChanged);
     }

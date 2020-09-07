@@ -27,9 +27,11 @@ public:
         LastProperty = 0xFFFF
     };
     Q_ENUMS(PropertyType)
-public:
+private:
+    //TODO set the constructor private and create a property factory
     Property(const QMetaProperty& metaProperty, QObject * object, LiteObject* parent=nullptr);
     Property(const QString& propName, LiteObject* parent=nullptr);
+public:
     virtual ~Property();
     virtual Q_INVOKABLE PropertyType type() const;
     virtual Q_INVOKABLE bool setValue(const QVariant& val);
@@ -49,6 +51,11 @@ private:
 protected:
     QVariant m_value;
     virtual bool checkValid(const QVariant& val);
+
+    friend class PropertyFactory;
+    friend class RangeProperty;
+    friend class NumericProperty;
+    friend class BooleanProperty;
 };
 
 class RangeProperty : public Property
@@ -57,9 +64,10 @@ class RangeProperty : public Property
     Q_PROPERTY(QVariant upper WRITE setUpper READ getUpper NOTIFY upperChanged)
     Q_PROPERTY(QVariant lower WRITE setLower READ getLower NOTIFY lowerChanged)
 
-public:
+private:
     RangeProperty(const QString& propName, LiteObject* parent=nullptr);
     RangeProperty(const QString& propName, const QVariant& lower, const QVariant& upper, LiteObject* parent=nullptr);
+public:
     virtual Q_INVOKABLE PropertyType type() const;
 
     virtual Q_INVOKABLE bool setUpper(const QVariant& val);
@@ -81,10 +89,10 @@ class NumericProperty : public Property
     Q_OBJECT
     Q_PROPERTY(QVariant upper WRITE setUpper READ getUpper NOTIFY upperChanged)
     Q_PROPERTY(QVariant lower WRITE setLower READ getLower NOTIFY lowerChanged)
-public:
+private:
     NumericProperty(const QString& propName, LiteObject* parent=nullptr);
     NumericProperty(const QString& propName, const QVariant& lower, const QVariant& upper, LiteObject* parent=nullptr);
-
+public:
     // virtual ~NumericProperty();
     virtual Q_INVOKABLE PropertyType type() const override;
 
@@ -104,13 +112,28 @@ protected:
 class BooleanProperty : public Property
 {
     Q_OBJECT
-public:
+private:
     BooleanProperty(const QString& propName, LiteObject* parent=nullptr);
+public:
     virtual Q_INVOKABLE PropertyType type() const;
     virtual Q_INVOKABLE bool setValue(bool b);
     virtual Q_INVOKABLE QVariant getValue() const;
 protected:
     bool checkValid(const QVariant& val);
+};
+
+class PropertyFactory : public LiteObject
+{
+    Q_OBJECT
+public:
+    PropertyFactory(LiteObject* owner);
+
+    Property* createProperty(const QMetaProperty& metaProperty, QObject * object);
+    Property* createProperty(const QString& name);
+    static Property* CreateProperty(const QMetaProperty& metaProperty, QObject * object, LiteObject* owner=nullptr);
+    static Property* CreateProperty(const QString& name, LiteObject* owner);
+private:
+    LiteObject* m_owner;
 };
 
 

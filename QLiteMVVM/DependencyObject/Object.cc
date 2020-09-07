@@ -117,6 +117,15 @@ QString LiteObject::printChildren()
 {
     QString str;
     WalkAndCreateStringTree(str, this);
+    QList<QByteArray> dynamicNames = dynamicPropertyNames();
+    str.append("-------dynamic property-------\n");
+    str.append(QString::number(dynamicNames.size()));
+    str.append("\n");
+    for(auto iter=dynamicNames.begin();iter!=dynamicNames.end();++iter)
+    {
+        str.append(*iter);
+        str.append("\n");
+    }
     return str;
 }
 
@@ -170,8 +179,12 @@ bool LiteObject::event(QEvent* ev)
         if (childObject) {
             // childObject->m_propertyListener =
             //     new LiteObjectPropertyListener(childObject);
+            this->setProperty(childObject->name().toLocal8Bit(), QVariant::fromValue<LiteObject*>(childObject));
+            qDebug() << childEvent->child();
             emit(rootObject()->objectTreeUpdated());
         }
+        //TODO add child to a map and try to cast to LiteObject and add as an dynamic property
+        qDebug() << childEvent->child();
     default:
         qDebug() << ev->type();
         return QObject::event(ev);
@@ -181,9 +194,15 @@ bool LiteObject::event(QEvent* ev)
 
 void LiteObject::litePropertyChangedEvent(LitePropertyChangedEvent* ev)
 {
-    qDebug() << "PropertyChangedEvent" << ev->sender()->name() <<
-             "PropertyName:" << ev->propertyName();
+    qDebug() << "PropertyChangedEvent" << ev->sender()->name() << "PropertyName:" << ev->propertyName();
 }
 
 #pragma endregion class LiteObject
+
+#pragma region class Object
+Object::Object(const QString& objName, LiteObject* parent) : LiteObject(objName, parent)
+{
+
+}
+#pragma endregion
 

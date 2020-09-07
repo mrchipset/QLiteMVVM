@@ -267,3 +267,31 @@ bool BooleanProperty::checkValid(const QVariant& val)
 }
 #pragma endregion
 
+#pragma region class PropertyFactory
+PropertyFactory::PropertyFactory(LiteObject* owner) : LiteObject(owner),
+    m_owner(owner)
+{
+
+}
+
+Property* PropertyFactory::createProperty(const QMetaProperty& metaProperty, QObject * object)
+{
+    return new Property(metaProperty, object, m_owner);
+}
+
+Property* PropertyFactory::createProperty(const QString& name)
+{
+    return new Property(name, m_owner);
+}
+
+Property* PropertyFactory::CreateProperty(const QMetaProperty& metaProperty, QObject * object, LiteObject* owner)
+{
+    return new Property(metaProperty, object, owner);
+}
+
+Property* PropertyFactory::CreateProperty(const QString& name, LiteObject* owner)
+{
+    return new Property(name, owner);
+}
+
+#pragma endregion

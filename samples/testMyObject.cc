@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QtConcurrent>
 #include <QJSEngine>
+#include <QScriptEngine>
 #include <QColor>
 
 #include <QTextEdit>
@@ -42,17 +43,18 @@ void testObject(LiteObject* rootObject)
 
 void testProperty(LiteObject* rootObject)
 {
-    NumericProperty property("property->1", 0, 9, rootObject);
-    qDebug() << property.setValue(10);
+    // NumericProperty property("property->1", 0, 9, rootObject);
+    Property* property = PropertyFactory::CreateProperty("property->1", rootObject);
+    qDebug() << property->setValue(10);
     QJSEngine engine;
-    QJSValue jsObject = engine.newQObject(&property);
+    QJSValue jsObject = engine.newQObject(property);
     engine.globalObject().setProperty("myProperty", jsObject);
     engine.evaluate("myProperty.upper = 4");
     engine.evaluate("myProperty.lower = 2");
     engine.evaluate("myProperty.value = 3.5");
-    qDebug() << property.setValue(8);
-    qDebug() << property.getValue();
-    qDebug() << property.type();
+    qDebug() << property->setValue(8);
+    qDebug() << property->getValue();
+    qDebug() << property->type();
 }
 
 void testWidget(LiteObject* rootObject)
@@ -121,11 +123,11 @@ void testPropertyControl(LiteObject* rootObject)
 {
     // NumericProperty property("property->1", 0, 9, rootObject);
     // qDebug() << property.setValue(10);
-    static QJSEngine engine;
+    static QScriptEngine engine;
     qmlRegisterType<LiteObject>("com.LiteObject", 1, 0, "LiteObject");
-    static QJSValue jsObject = engine.newQObject(rootObject);
+    static QScriptValue jsObject = engine.newQObject(rootObject);
     engine.globalObject().setProperty("rootObject", jsObject);
-    static QJSValue jsMetaObject = engine.newQMetaObject(&LiteObject::staticMetaObject);
+    static QScriptValue jsMetaObject = engine.newQMetaObject(&LiteObject::staticMetaObject);
     engine.globalObject().setProperty("LiteObject", jsMetaObject);
     static QMainWindow window;
     QVBoxLayout* layout = new QVBoxLayout(&window);
@@ -136,7 +138,7 @@ void testPropertyControl(LiteObject* rootObject)
     QObject::connect(button, &QPushButton::clicked, [=]()
     {
         QString str = text->toPlainText();
-        QJSValue jsval = engine.evaluate(str);
+        QScriptValue jsval = engine.evaluate(str);
         label->setText(jsval.toString());
     });
     layout->addWidget(text, 3);
@@ -155,13 +157,13 @@ int main(int argc, char** argv)
 
     Logger::GetInstance();
     LiteObject* rootObject = &LiteObject::CreateRootObject();
-    LiteObject* grp1 = new LiteObject("grp1", rootObject);
-    LiteObject* grp2 = new LiteObject("grp2", rootObject);
-    LiteObject* item1_1 = new LiteObject("item1", grp1);
-    LiteObject* item2_1 = new LiteObject("item1", grp2);
+    Object* grp1 = new Object("grp1", rootObject);
+    Object* grp2 = new Object("grp2", rootObject);
+    Object* item1_1 = new Object("item1", grp1);
+    Object* item2_1 = new Object("item1", grp2);
 
     // testWidget(rootObject);
-    LiteObject* item1_2 = new LiteObject("item2", grp1);
+    LiteObject* item1_2 = new Object("item2", grp1);
     MyObject* item2_2 = new MyObject();
     // testObject(rootObject);
     testPropertyControl(rootObject);
