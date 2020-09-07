@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDialog>
 #include <QPushButton>
+#include <QMessageBox>
 
 #pragma region class PropertyItemDelegate
 PropertyItemDelegate::PropertyItemDelegate(QObject *parent) : QItemDelegate(parent)

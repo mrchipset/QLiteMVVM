@@ -8,6 +8,25 @@
 #include "Property.h"
 
 # pragma region class LitePropertyEvent
+
+static void WalkAndCreateStringTree(QString& str, LiteObject* parentObj)
+{
+    if (parentObj != nullptr)
+    {
+        QObjectList childrens = parentObj->children();
+        for(auto iter=childrens.begin();iter!=childrens.end();++iter)
+        {
+            LiteObject * liteObj = qobject_cast<LiteObject*>(*iter);
+            if (liteObj)
+            {
+                str.append(liteObj->name());
+                str.append("\n");
+                WalkAndCreateStringTree(str, liteObj);
+            }
+        }
+    }
+}
+
 const QEvent::Type LitePropertyChangedEvent::eventType =
     static_cast<QEvent::Type>(QEvent::registerEventType(LiteEvent::LitePropertyChanged));
 
@@ -53,9 +72,12 @@ void registerMetaType()
     }
 
     qRegisterMetaType<QMap<QString, Property*>>("QMap<QString, Property*>");
-
     metaTypeRegistered = true;
     
+}
+LiteObject::LiteObject(LiteObject* parent) : LiteObject("None", parent)
+{
+
 }
 
 LiteObject::LiteObject(const QString& objName, LiteObject* parent)
@@ -89,6 +111,30 @@ LiteObject* LiteObject::rootObject() const
 LiteObject* LiteObject::parentObject() const
 {
     return m_parentObject;
+}
+
+QString LiteObject::printChildren()
+{
+    QString str;
+    WalkAndCreateStringTree(str, this);
+    return str;
+}
+
+LiteObject* LiteObject::getChildren(const QString& name)
+{
+    QObjectList childrens = this->children();
+    for(auto iter=childrens.begin();iter!=childrens.end();++iter)
+    {
+        LiteObject * liteObj = qobject_cast<LiteObject*>(*iter);
+        if (liteObj)
+        {
+            if(liteObj->name() == name)
+            {
+                return liteObj;
+            }
+        }
+    }
+    return nullptr;
 }
 
 LiteObject& LiteObject::CreateRootObject()

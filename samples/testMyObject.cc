@@ -10,6 +10,10 @@
 #include <QJSEngine>
 #include <QColor>
 
+#include <QTextEdit>
+#include <QLabel>
+#include <QtQml>
+
 #include "Global/Global"
 #include "DependencyObject/DependencyObject"
 #include "DependencyObject/Property.h"
@@ -113,9 +117,42 @@ void testTableView(LiteObject* rootObject)
     window.show();
 }
 
+void testPropertyControl(LiteObject* rootObject)
+{
+    // NumericProperty property("property->1", 0, 9, rootObject);
+    // qDebug() << property.setValue(10);
+    static QJSEngine engine;
+    qmlRegisterType<LiteObject>("com.LiteObject", 1, 0, "LiteObject");
+    static QJSValue jsObject = engine.newQObject(rootObject);
+    engine.globalObject().setProperty("rootObject", jsObject);
+    static QJSValue jsMetaObject = engine.newQMetaObject(&LiteObject::staticMetaObject);
+    engine.globalObject().setProperty("LiteObject", jsMetaObject);
+    static QMainWindow window;
+    QVBoxLayout* layout = new QVBoxLayout(&window);
+    QTextEdit* text = new QTextEdit(&window);
+    QPushButton* button = new QPushButton("Eval", &window);
+    QLabel* label = new QLabel(&window);
+
+    QObject::connect(button, &QPushButton::clicked, [=]()
+    {
+        QString str = text->toPlainText();
+        QJSValue jsval = engine.evaluate(str);
+        label->setText(jsval.toString());
+    });
+    layout->addWidget(text, 3);
+    layout->addWidget(button, 1);
+    layout->addWidget(label, 3);
+    window.setCentralWidget(new QWidget(&window));
+    window.centralWidget()->setLayout(layout);
+    window.resize(640, 480);
+    window.show();
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    
+
     Logger::GetInstance();
     LiteObject* rootObject = &LiteObject::CreateRootObject();
     LiteObject* grp1 = new LiteObject("grp1", rootObject);
@@ -127,9 +164,11 @@ int main(int argc, char** argv)
     LiteObject* item1_2 = new LiteObject("item2", grp1);
     MyObject* item2_2 = new MyObject();
     // testObject(rootObject);
+    testPropertyControl(rootObject);
     // testProperty(rootObject);
-    testTableView(rootObject);
+    // testTableView(rootObject);
     // return 0;
+    
     return app.exec();
 }
 

@@ -30,11 +30,14 @@ class LiteObject : public QObject
     Q_OBJECT
     Q_PROPERTY(QString objName READ name)
 public:
+    LiteObject(LiteObject* parent = nullptr);
     LiteObject(const QString& objName, LiteObject* parent = nullptr);
     virtual ~LiteObject();
     Q_INVOKABLE QString name() const;
     Q_INVOKABLE LiteObject* rootObject() const;
     Q_INVOKABLE LiteObject* parentObject() const;
+    Q_INVOKABLE QString printChildren();
+    Q_INVOKABLE LiteObject* getChildren(const QString& name);
     static LiteObject& CreateRootObject();
 Q_SIGNALS:
     void objectTreeUpdated();
