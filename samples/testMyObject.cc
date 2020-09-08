@@ -69,7 +69,7 @@ void testWidget(LiteObject* rootObject)
     layout->addWidget(enable);
     layout->addWidget(disable);
     layout->addWidget(label);
-    Widget *widget = new Widget("Tree", rootObject);
+    FakeWidget *widget = new FakeWidget("Tree", rootObject);
     widget->bindQWidget(label);
     QMap<QString, Property *> properties = widget->property("properties").value<QMap<QString, Property *>>();
     qDebug() << properties.size();
@@ -157,13 +157,13 @@ int main(int argc, char** argv)
 
     Logger::GetInstance();
     LiteObject* rootObject = &LiteObject::CreateRootObject();
-    Object* grp1 = new Object("grp1", rootObject);
-    Object* grp2 = new Object("grp2", rootObject);
-    Object* item1_1 = new Object("item1", grp1);
-    Object* item2_1 = new Object("item1", grp2);
+    DataObject* grp1 = new DataObject("grp1", rootObject);
+    DataObject* grp2 = new DataObject("grp2", rootObject);
+    DataObject* item1_1 = new DataObject("item1", grp1);
+    DataObject* item2_1 = new DataObject("item1", grp2);
 
     // testWidget(rootObject);
-    LiteObject* item1_2 = new Object("item2", grp1);
+    LiteObject* item1_2 = new DataObject("item2", grp1);
     MyObject* item2_2 = new MyObject();
     // testObject(rootObject);
     testPropertyControl(rootObject);

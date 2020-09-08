@@ -255,7 +255,7 @@ void LiteObject::timerEvent(QTimerEvent* ev)
 #pragma endregion class LiteObject
 
 #pragma region class Object
-Object::Object(const QString& objName, LiteObject* parent) : LiteObject(objName, parent)
+DataObject::DataObject(const QString& objName, LiteObject* parent) : LiteObject(objName, parent)
 {
 
 }

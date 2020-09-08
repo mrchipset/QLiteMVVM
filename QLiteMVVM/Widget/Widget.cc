@@ -2,18 +2,18 @@
 
 #include <QDebug>
 
-Widget::Widget(const QString& name, LiteObject* parent) 
+FakeWidget::FakeWidget(const QString& name, LiteObject* parent) 
     : LiteObject(name, parent), m_bindQWidget(nullptr)
 {
 
 }
 
-Widget::~Widget()
+FakeWidget::~FakeWidget()
 {
     
 }
 
-bool Widget::bindQWidget(QWidget* widget)
+bool FakeWidget::bindQWidget(QWidget* widget)
 {
     if (widget != nullptr)
     {
@@ -26,17 +26,17 @@ bool Widget::bindQWidget(QWidget* widget)
     return false;
 }
 
-QWidget* Widget::bindedQWidget() const
+QWidget* FakeWidget::bindedQWidget() const
 {
     return m_bindQWidget;
 }
 
-QMap<QString, Property*> Widget::getProperties() const
+QMap<QString, Property*> FakeWidget::getProperties() const
 {
     return m_properties;
 }
 
-bool Widget::setProperty(const QString& name, const QVariant& value)
+bool FakeWidget::setProperty(const QString& name, const QVariant& value)
 {
     if (m_properties.contains(name))
     {
@@ -45,7 +45,7 @@ bool Widget::setProperty(const QString& name, const QVariant& value)
     return false;
 }
 
-void Widget::printProperties()
+void FakeWidget::printProperties()
 {
     for(auto iter=m_properties.begin(); iter!=m_properties.end();++iter)
     {
@@ -56,23 +56,23 @@ void Widget::printProperties()
     }
 }
 
-void Widget::connectQWidgetSignal()
+void FakeWidget::connectQWidgetSignal()
 {
     if (m_bindQWidget != nullptr)
     {
-        connect(m_bindQWidget, &QObject::destroyed, this, &Widget::onQWidgetDestroy);
+        connect(m_bindQWidget, &QObject::destroyed, this, &FakeWidget::onQWidgetDestroy);
     }
 }
 
-void Widget::disconnectQWidgetSignal()
+void FakeWidget::disconnectQWidgetSignal()
 {
     if (m_bindQWidget != nullptr)
     {
-        disconnect(m_bindQWidget, &QObject::destroyed, this, &Widget::onQWidgetDestroy);
+        disconnect(m_bindQWidget, &QObject::destroyed, this, &FakeWidget::onQWidgetDestroy);
     }
 }
 
-void Widget::createProperties()
+void FakeWidget::createProperties()
 {
     qDeleteAll(m_properties);
     QList<QMetaProperty> metaProperties = FakeObjectListener::GetMetaProperty(m_bindQWidget);
@@ -84,7 +84,7 @@ void Widget::createProperties()
     }
 }
 
-void Widget::onQWidgetDestroy()
+void FakeWidget::onQWidgetDestroy()
 {
     qDeleteAll(m_properties);
     m_bindQWidget = nullptr;

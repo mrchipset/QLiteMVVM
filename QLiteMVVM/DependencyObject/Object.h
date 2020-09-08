@@ -7,6 +7,7 @@
 
 #include "ObjectListener.h"
 class LiteObject;
+class Property;
 
 enum LiteEvent {
     LitePropertyChanged = QEvent::User + 1
@@ -62,11 +63,12 @@ protected:
 };
 Q_DECLARE_METATYPE(LiteObject*);
 
-class Object : public LiteObject
+class DataObject : public LiteObject
 {
     Q_OBJECT
 public:
-    Object(const QString& objName, LiteObject* parent = nullptr);
+    Q_INVOKABLE DataObject(const QString& objName, LiteObject* parent = nullptr);
+Q_SIGNALS:
+    void innerDataChange();
 };
-Q_DECLARE_METATYPE(Object*);
 #endif
