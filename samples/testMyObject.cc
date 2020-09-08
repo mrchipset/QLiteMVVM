@@ -22,6 +22,7 @@
 #include "Widget/TreeWidget.h"
 #include "Widget/PropertyTableView.h"
 #include "myObject.h"
+#include "Graph.h"
 
 void testObject(LiteObject* rootObject)
 {
@@ -134,16 +135,29 @@ void testPropertyControl(LiteObject* rootObject)
     QTextEdit* text = new QTextEdit(&window);
     QPushButton* button = new QPushButton("Eval", &window);
     QLabel* label = new QLabel(&window);
-
+    qRegisterMetaType<QVector<double>>("QVector<double>");
+    qScriptRegisterSequenceMetaType<QVector<double>>(&engine);
+    QCustomPlot* plot = new QCustomPlot(&window);
+    Graph* graph = new Graph(plot->xAxis, plot->yAxis);
+    
     QObject::connect(button, &QPushButton::clicked, [=]()
     {
         QString str = text->toPlainText();
         QScriptValue jsval = engine.evaluate(str);
         label->setText(jsval.toString());
+        plot->rescaleAxes();
+        plot->replot();
     });
+    
+    static QScriptValue jsGraphObject = engine.newQObject(graph);
+    engine.globalObject().setProperty("graph", jsGraphObject);
+    QVector<double> x = {1, 2, 3};
+    QVector<double> y = {1, 2, 3};
+    graph->setData(x, y);
     layout->addWidget(text, 3);
     layout->addWidget(button, 1);
-    layout->addWidget(label, 3);
+    layout->addWidget(label, 1);
+    layout->addWidget(plot, 3);
     window.setCentralWidget(new QWidget(&window));
     window.centralWidget()->setLayout(layout);
     window.resize(640, 480);
@@ -153,7 +167,6 @@ void testPropertyControl(LiteObject* rootObject)
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    
 
     Logger::GetInstance();
     LiteObject* rootObject = &LiteObject::CreateRootObject();

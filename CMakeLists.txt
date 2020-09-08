@@ -19,6 +19,7 @@ endif()
 
 add_definitions(-w)
 
+add_subdirectory(Plot)
 add_subdirectory(QLiteMVVM)
 add_subdirectory(samples)
 
