@@ -83,7 +83,8 @@ LiteObject::LiteObject(LiteObject* parent) : LiteObject("None", parent)
 LiteObject::LiteObject(const QString& objName, LiteObject* parent)
     : QObject(parent),
     m_ObjectName(objName),
-    m_parentObject(parent)
+    m_parentObject(parent),
+    m_childrenAttacherTimer(0)
 {
     if(this!=&RootObject && this->parent() == nullptr)
     {
@@ -95,7 +96,10 @@ LiteObject::LiteObject(const QString& objName, LiteObject* parent)
 
 LiteObject::~LiteObject()
 {
-
+    if (m_childrenAttacherTimer > 0)
+    {
+        killTimer(m_childrenAttacherTimer);
+    }
 }
 
 QString LiteObject::name() const
@@ -152,12 +156,47 @@ LiteObject& LiteObject::CreateRootObject()
     return RootObject;
 }
 
+void LiteObject::attachChildrenToProperty()
+{
+    //if empty kill timer
+    if(m_childrenAttacherTimer > 0  && m_unFullyConstructedChildren.size() == 0)
+    {
+        killTimer(m_childrenAttacherTimer);
+        m_childrenAttacherTimer = 0;
+    }
+
+    for(int i = 0; i < m_unFullyConstructedChildren.size(); ++i)
+    {
+        auto attacher = m_unFullyConstructedChildren[i];
+        LiteObject* object = qobject_cast<LiteObject*>(attacher->object);
+        if (object)
+        {
+            this->setProperty(object->name().toLocal8Bit(), QVariant::fromValue<LiteObject*>(object));
+            attacher->retry = 0;
+        }else
+        {
+            attacher->retry--;
+        }
+    }
+
+    for (int i = m_unFullyConstructedChildren.size() - 1; i >= 0; --i)
+    {
+        m_unFullyConstructedChildren.remove(i);
+    }
+}
+
+void LiteObject::litePropertyChangedEvent(LitePropertyChangedEvent* ev)
+{
+    qDebug() << "PropertyChangedEvent" << ev->sender()->name() << "PropertyName:" << ev->propertyName();
+}
+
 bool LiteObject::event(QEvent* ev)
 {
     QDynamicPropertyChangeEvent* dynamicEv = nullptr;
     LitePropertyChangedEvent* event;
     QChildEvent* childEvent;
-    LiteObject* childObject;
+    LiteObject* liteObject;
+    QObject* object;
     switch (ev->type()) {
     case QEvent::DynamicPropertyChange:
         qDebug() << "DynamicPropertyChanged";
@@ -175,14 +214,27 @@ bool LiteObject::event(QEvent* ev)
     case QEvent::ChildAdded:
         childEvent = dynamic_cast<QChildEvent*>(ev);
         qDebug() << childEvent;
-        childObject = dynamic_cast<LiteObject*>(childEvent->child());
-        if (childObject) {
+        liteObject = qobject_cast<LiteObject*>(childEvent->child());
+        if (liteObject) {
             // childObject->m_propertyListener =
             //     new LiteObjectPropertyListener(childObject);
-            this->setProperty(childObject->name().toLocal8Bit(), QVariant::fromValue<LiteObject*>(childObject));
+            this->setProperty(liteObject->name().toLocal8Bit(), QVariant::fromValue<LiteObject*>(liteObject));
             qDebug() << childEvent->child();
             emit(rootObject()->objectTreeUpdated());
+        }else
+        {
+            object = childEvent->child();
+            ChildrenAttacher* attacher = new ChildrenAttacher();
+            attacher->object = object;
+            attacher->retry = 3;
+            m_unFullyConstructedChildren.append(attacher);
+            if (m_childrenAttacherTimer < 1)
+            {
+                m_childrenAttacherTimer = startTimer(50);
+            }
         }
+        
+        
         //TODO add child to a map and try to cast to LiteObject and add as an dynamic property
         qDebug() << childEvent->child();
     default:
@@ -192,9 +244,12 @@ bool LiteObject::event(QEvent* ev)
     return true;
 }
 
-void LiteObject::litePropertyChangedEvent(LitePropertyChangedEvent* ev)
+void LiteObject::timerEvent(QTimerEvent* ev)
 {
-    qDebug() << "PropertyChangedEvent" << ev->sender()->name() << "PropertyName:" << ev->propertyName();
+    if(ev->timerId() == m_childrenAttacherTimer)
+    {
+        attachChildrenToProperty();
+    }
 }
 
 #pragma endregion class LiteObject
@@ -205,4 +260,3 @@ Object::Object(const QString& objName, LiteObject* parent) : LiteObject(objName,
 
 }
 #pragma endregion
-

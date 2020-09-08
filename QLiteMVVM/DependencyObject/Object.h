@@ -25,6 +25,12 @@ private:
     QString m_propertyName;
 };
 
+typedef struct _ChildrenAttacher
+{
+    QObject* object; ///< QObject pointer
+    int retry{3};  ///< retry time
+} ChildrenAttacher;
+
 class LiteObject : public QObject
 {
     Q_OBJECT
@@ -42,12 +48,17 @@ public:
 Q_SIGNALS:
     void objectTreeUpdated();
 private:
+    static LiteObject RootObject;
+
     QString m_ObjectName;
     LiteObject* m_parentObject;
-    static LiteObject RootObject;
+    QVector<ChildrenAttacher*> m_unFullyConstructedChildren;
+    int m_childrenAttacherTimer;    ///< Id of the Timer for attach children to parent dynamic property
+    Q_SLOT void attachChildrenToProperty();
 protected:
     virtual void litePropertyChangedEvent(LitePropertyChangedEvent* ev);
     virtual bool event(QEvent* ev) override;
+    virtual void timerEvent(QTimerEvent* ev) override;
 };
 Q_DECLARE_METATYPE(LiteObject*);
 
