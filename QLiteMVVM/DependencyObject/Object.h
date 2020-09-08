@@ -7,6 +7,7 @@
 
 #include "ObjectListener.h"
 class LiteObject;
+class Property;
 
 enum LiteEvent {
     LitePropertyChanged = QEvent::User + 1
@@ -25,6 +26,12 @@ private:
     QString m_propertyName;
 };
 
+typedef struct _ChildrenAttacher
+{
+    QObject* object; ///< QObject pointer
+    int retry{3};  ///< retry time
+} ChildrenAttacher;
+
 class LiteObject : public QObject
 {
     Q_OBJECT
@@ -42,20 +49,26 @@ public:
 Q_SIGNALS:
     void objectTreeUpdated();
 private:
+    static LiteObject RootObject;
+
     QString m_ObjectName;
     LiteObject* m_parentObject;
-    static LiteObject RootObject;
+    QVector<ChildrenAttacher*> m_unFullyConstructedChildren;
+    int m_childrenAttacherTimer;    ///< Id of the Timer for attach children to parent dynamic property
+    Q_SLOT void attachChildrenToProperty();
 protected:
     virtual void litePropertyChangedEvent(LitePropertyChangedEvent* ev);
     virtual bool event(QEvent* ev) override;
+    virtual void timerEvent(QTimerEvent* ev) override;
 };
 Q_DECLARE_METATYPE(LiteObject*);
 
-class Object : public LiteObject
+class DataObject : public LiteObject
 {
     Q_OBJECT
 public:
-    Object(const QString& objName, LiteObject* parent = nullptr);
+    Q_INVOKABLE DataObject(const QString& objName, LiteObject* parent = nullptr);
+Q_SIGNALS:
+    void innerDataChange();
 };
-Q_DECLARE_METATYPE(Object*);
 #endif

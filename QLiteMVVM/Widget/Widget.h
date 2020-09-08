@@ -7,13 +7,13 @@
 #include "../DependencyObject/Property.h"
 
 
-class Widget : public LiteObject
+class FakeWidget : public LiteObject
 {
     Q_OBJECT
     Q_PROPERTY(QMap<QString, Property*> properties READ getProperties)
 public:
-    Widget(const QString& name, LiteObject* parent=nullptr);
-    ~Widget();
+    FakeWidget(const QString& name, LiteObject* parent=nullptr);
+    ~FakeWidget();
     Q_INVOKABLE bool bindQWidget(QWidget * widget);
     Q_INVOKABLE QWidget* bindedQWidget() const;
     QMap<QString, Property*> getProperties() const;
@@ -29,4 +29,6 @@ protected:
     QMap<QString, Property*> m_properties;
     QWidget* m_bindQWidget;
 };
+
+// TODO Use eventfilter to install the fakewidget to Qt Widget?
 #endif
