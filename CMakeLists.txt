@@ -19,8 +19,8 @@ endif()
 
 add_definitions(-w)
 
-add_subdirectory(Plot)
 add_subdirectory(QLiteMVVM)
+add_subdirectory(Plot)
 add_subdirectory(samples)
 
 # set(CPACK_PROJECT_NAME ${PROJECT_NAME})
