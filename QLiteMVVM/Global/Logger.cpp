@@ -3,7 +3,7 @@
 
 Logger* Logger::m_pLoggerInstance = nullptr;
 
-Logger* Logger::GetInstance()
+Logger* Logger::Install()
 {
     if (m_pLoggerInstance == nullptr) {
         m_pLoggerInstance = new Logger();

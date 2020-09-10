@@ -5,7 +5,7 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-find_package(Qt5 COMPONENTS Core Concurrent Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Concurrent Widgets Script REQUIRED)
 
 
 aux_source_directory(. DIR_SRCS)
@@ -29,5 +29,6 @@ target_link_libraries(${PROJECT_NAME}
                         Qt5::Core
                         Qt5::Concurrent
                         Qt5::Widgets
+                        Qt5::Script
                         )
 

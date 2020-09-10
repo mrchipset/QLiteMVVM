@@ -1,2 +1,4 @@
 #include "Object.h"
 #include "ObjectListener.h"
+#include "Property.h"
+#include "Variant.h"

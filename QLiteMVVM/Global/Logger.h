@@ -52,7 +52,7 @@ public:
 
 
 public:
-    static Logger* GetInstance();
+    static Logger* Install();
     static void SetLogLevel(Level level);
     static Level LogLevel();
     static void LoggerMessageHandler(QtMsgType type, QMessageLogContext const& context, QString const& msg);

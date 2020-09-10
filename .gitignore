@@ -1,4 +1,4 @@
-﻿
+
 # Created by https://www.toptal.com/developers/gitignore/api/qt,qtcreator,c++,cmake,visualstudio,visualstudiocode,python,qml,java,java-web,aspnetcore
 # Edit at https://www.toptal.com/developers/gitignore?templates=qt,qtcreator,c++,cmake,visualstudio,visualstudiocode,python,qml,java,java-web,aspnetcore
 
@@ -757,3 +757,6 @@ MigrationBackup/
 # Added by X.F.Zhou
 Specifications.txt
 .vscode
+Plot/qcustomplot.cpp
+Plot/qcustomplot.h
+.DS_Store

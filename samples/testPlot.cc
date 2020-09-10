@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    Logger::GetInstance();
+    Logger::Install();
     LiteObject* rootObject = &LiteObject::CreateRootObject();
     QScriptEngine engine;
     qScriptRegisterSequenceMetaType<QList<QCPGraph*>>(&engine);

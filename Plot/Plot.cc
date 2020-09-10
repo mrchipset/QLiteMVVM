@@ -17,3 +17,15 @@ void Figure::plot()
 {
     this->replot(QCustomPlot::rpQueuedReplot);
 }
+
+FigureSubWindow::FigureSubWindow(const QString& title, QWidget* parent) : QMdiSubWindow(parent),
+m_figure(new Figure(this))
+{
+    setWindowTitle(title);
+    setWidget(m_figure);
+}
+
+QVariant FigureSubWindow::figure()
+{
+    return QVariant::fromValue<Figure*>(m_figure);
+}

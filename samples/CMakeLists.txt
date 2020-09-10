@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(Samples VERSION 0.1.0)
 
-execute_process(COMMAND python3 migrate.py WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
 find_package(Qt5 COMPONENTS Core Concurrent Widgets Qml  Script REQUIRED)
 
 include_directories(../QLiteMVVM)

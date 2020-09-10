@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    Logger::GetInstance();
+    Logger::Install();
     LiteObject* rootObject = &LiteObject::CreateRootObject();
     DataObject* grp1 = new DataObject("grp1", rootObject);
     DataObject* grp2 = new DataObject("grp2", rootObject);
