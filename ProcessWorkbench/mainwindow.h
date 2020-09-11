@@ -10,18 +10,18 @@ namespace Ui {
     class MainWindow;
 } // namespace Ui
 QT_END_NAMESPACE
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     MainWindow(QWidget* parent=nullptr);
     ~MainWindow();
-    Q_INVOKABLE bool createSubPlotWindow(const QString& title);
+    Q_INVOKABLE QVariant createSubPlotWindow(const QString& title);
 private:
     Ui::MainWindow *ui;
     ScriptEngine* m_engine;
     void connectSignals();
-    Q_SLOT void onCommandReturnPressed();
 };
 
 #endif

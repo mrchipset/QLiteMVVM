@@ -21,7 +21,7 @@ add_definitions(-w)
 
 add_subdirectory(QLiteMVVM)
 add_subdirectory(Plot)
-add_subdirectory(samples)
+#add_subdirectory(samples)
 add_subdirectory(ProcessWorkbench)
 # set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 # set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

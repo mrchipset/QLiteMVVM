@@ -11,10 +11,14 @@ include_directories(../Plot/QCustomPlot)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 aux_source_directory(. DIR_SRCS)
-
+aux_source_directory(Widgets DIR_WIDGET_SRCS)
 qt5_wrap_ui(UI_FILES UI/mainwindow.ui)
 
-add_executable(${PROJECT_NAME} ${DIR_SRCS} ${UI_FILES})
+add_executable(${PROJECT_NAME} 
+    ${DIR_SRCS} 
+    ${DIR_WIDGET_SRCS}
+    ${UI_FILES})
+    
 target_link_libraries(${PROJECT_NAME}
                         QLiteMVVMLib
                         Plot

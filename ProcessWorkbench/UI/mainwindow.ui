@@ -19,7 +19,7 @@
      <widget class="QMdiArea" name="mdiArea"/>
     </item>
     <item>
-     <widget class="QLineEdit" name="commandLine"/>
+     <widget class="ConsoleWidget" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -35,6 +35,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ConsoleWidget</class>
+   <extends>QWidget</extends>
+   <header>Widgets/ConsoleWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

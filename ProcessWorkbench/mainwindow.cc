@@ -22,29 +22,23 @@ MainWindow::~MainWindow()
 
 }
 
-bool MainWindow::createSubPlotWindow(const QString& title)
+QVariant MainWindow::createSubPlotWindow(const QString& title)
 {
     FigureSubWindow* window = new FigureSubWindow(title, this);
 
     if(m_engine->registerObject(title, window, "mainwindow"))
     {
         ui->mdiArea->addSubWindow(window);
+        window->resize(128, 128);
         window->show();
-        return true;
     } else
     {
         window->deleteLater();
+        return QVariant();
     }
+    return QVariant::fromValue<FigureSubWindow*>(window);
 }
 
 void MainWindow::connectSignals()
 {
-    connect(ui->commandLine, &QLineEdit::returnPressed, this, &MainWindow::onCommandReturnPressed);
-}
-
-void MainWindow::onCommandReturnPressed()
-{
-    
-    qDebug() << m_engine->evaluate(ui->commandLine->text()).toString();
-    ui->commandLine->setText("");
 }

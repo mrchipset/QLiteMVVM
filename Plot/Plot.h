@@ -21,10 +21,10 @@ public:
 class FigureSubWindow : public QMdiSubWindow
 {
     Q_OBJECT
-    Q_PROPERTY(QVariant figure READ figure)
+    Q_PROPERTY(QVariant figure READ getFigure)
 public:
     Q_INVOKABLE FigureSubWindow(const QString& title, QWidget* parent);
-    Q_INVOKABLE QVariant figure();
+    Q_INVOKABLE QVariant getFigure();
 
 private:
     Figure* m_figure;

@@ -13,6 +13,6 @@ public:
     Q_SIGNAL void fooChanged();
 private:
     QString m_foo;
-
+    
 };
 #endif

@@ -25,7 +25,7 @@ m_figure(new Figure(this))
     setWidget(m_figure);
 }
 
-QVariant FigureSubWindow::figure()
+QVariant FigureSubWindow::getFigure()
 {
     return QVariant::fromValue<Figure*>(m_figure);
 }
