@@ -24,6 +24,7 @@ void ConsoleListWidget::addConsoleItem(const QString& content)
         delete widget;
     }
     new QListWidgetItem(content, this);
+    setCurrentRow(count() - 1);
 }
 
 bool ConsoleListWidget::setMaxItems(int max)
@@ -41,12 +42,51 @@ int ConsoleListWidget::getMaxItems() const
     return m_maxItems;
 }
 
+CommandLineEdit::CommandLineEdit(QWidget* parent) : QLineEdit(parent),
+    m_historyPosition(-1)
+{
+
+}
+void CommandLineEdit::keyPressEvent(QKeyEvent* ev)
+{
+    switch (ev->key())
+    {
+    case Qt::Key_Up:
+        if (m_historyPosition < m_historyCommands.size() - 1)
+        {
+            m_historyPosition++;
+            setText(m_historyCommands.at(m_historyPosition));
+        }
+        ev->accept();
+        break;
+    case Qt::Key_Down:
+        if (m_historyPosition > 0)
+        {
+            m_historyPosition--;
+            setText(m_historyCommands.at(m_historyPosition));
+        }
+        ev->accept();
+        break;
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        m_historyPosition = -1;
+        if (m_historyCommands.size() + 1 > LimitedMaxItems)
+        {
+            m_historyCommands.removeLast();
+        }
+        m_historyCommands.insert(0, text());
+    default:
+        QLineEdit::keyPressEvent(ev);
+        break;
+    }
+
+}
 
 ConsoleWidget::ConsoleWidget(QWidget* parent) : QWidget(parent)
 {
     m_pLayout = new QVBoxLayout(this);
     m_listWidget = new ConsoleListWidget(this);
-    m_commandLine = new QLineEdit(this);
+    m_commandLine = new CommandLineEdit(this);
     m_pLayout->addWidget(m_listWidget);
     m_pLayout->addWidget(m_commandLine);
     setLayout(m_pLayout);
@@ -61,4 +101,6 @@ void ConsoleWidget::onReturnPressed()
     QString result = m_engine->evaluate(command).toString();
     m_listWidget->addConsoleItem(result);
     m_commandLine->setText(QString());
+    m_commandLine->setFocus(Qt::OtherFocusReason);
 }
+

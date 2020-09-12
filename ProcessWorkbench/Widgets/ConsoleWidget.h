@@ -6,7 +6,10 @@
 #include <QListWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
-#
+#include <QList>
+#include <QVector>
+#include <QKeyEvent>
+
 #include "Command/Command"
 
 class ConsoleListWidget : public QListWidget
@@ -21,10 +24,21 @@ public:
     int getMaxItems() const;
 private:
     int m_maxItems;
-
 };
 
-//TODO add history function
+class CommandLineEdit : public QLineEdit
+{
+    Q_OBJECT
+public:
+    CommandLineEdit(QWidget* parent);
+private:
+    QList<QString> m_historyCommands;
+    int m_historyPosition;
+
+protected:
+    void keyPressEvent(QKeyEvent* ev) override;
+};
+
 class ConsoleWidget : public QWidget
 {
     Q_OBJECT
@@ -33,11 +47,12 @@ public:
 
 private:
     ConsoleListWidget* m_listWidget;
-    QLineEdit* m_commandLine;
+    CommandLineEdit* m_commandLine;
     QVBoxLayout* m_pLayout;
     ScriptEngine* m_engine;
 
     Q_SLOT void onReturnPressed();
+
 };
 
 #endif
